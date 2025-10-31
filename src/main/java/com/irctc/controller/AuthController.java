@@ -1,0 +1,7 @@
+package com.irctc.controller; import org.springframework.web.bind.annotation.*; import com.irctc.repository.UserRepository; import com.irctc.entity.User; import org.springframework.security.crypto.password.PasswordEncoder; import com.irctc.config.JwtUtil; import java.util.Map;
+@RestController @RequestMapping("/api/auth") public class AuthController {
+    private final UserRepository userRepo; private final PasswordEncoder passwordEncoder; private final JwtUtil jwtUtil;
+    public AuthController(UserRepository ur, PasswordEncoder pe, JwtUtil jwt){this.userRepo=ur; this.passwordEncoder=pe; this.jwtUtil=jwt;}
+    @PostMapping("/register") public Map<String,Object> register(@RequestBody Map<String,String> req){ String username=req.get("username"); String password=req.get("password"); if(userRepo.existsByUsername(username)) throw new IllegalArgumentException("username taken"); User u=new User(); u.setUsername(username); u.setPassword(passwordEncoder.encode(password)); u.setEmail(req.get("email")); userRepo.save(u); return Map.of("message","registered"); }
+    @PostMapping("/login") public Map<String,String> login(@RequestBody Map<String,String> req){ User user = userRepo.findByUsername(req.get("username")).orElseThrow(()->new IllegalArgumentException("invalid credentials")); if(!passwordEncoder.matches(req.get("password"), user.getPassword())) throw new IllegalArgumentException("invalid credentials"); String token = jwtUtil.generateToken(user.getUsername()); return Map.of("token", token); }
+}

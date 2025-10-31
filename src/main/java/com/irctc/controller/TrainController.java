@@ -1,0 +1,2 @@
+package com.irctc.controller; import org.springframework.web.bind.annotation.*; import com.irctc.repository.TrainRepository; import com.irctc.entity.Train; import java.util.List;
+@RestController @RequestMapping("/api/trains") public class TrainController { private final TrainRepository repo; public TrainController(TrainRepository repo){this.repo=repo;} @GetMapping public List<Train> all(){return repo.findAll();} @PostMapping public Train add(@RequestBody Train t){return repo.save(t);} }

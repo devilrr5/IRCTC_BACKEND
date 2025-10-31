@@ -1,0 +1,1 @@
+package com.irctc.service; import java.math.BigDecimal; import com.irctc.dto.PaymentDetails; import com.irctc.service.impl.PaymentResult; public interface PaymentService { PaymentResult processPayment(Long bookingId, BigDecimal amount, PaymentDetails details); }
